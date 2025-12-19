@@ -1,9 +1,9 @@
-package org.fathand.identity_service.services;
+package org.fathand.identity_service.service;
 
 import org.fathand.identity_service.dto.request.UserCreatedRequest;
 import org.fathand.identity_service.dto.request.UserUpdatedRequest;
-import org.fathand.identity_service.entities.User;
-import org.fathand.identity_service.repositories.IUserRepository;
+import org.fathand.identity_service.entity.User;
+import org.fathand.identity_service.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,9 @@ public class UserService {
     private IUserRepository userRepository;
 
     public User createUser(UserCreatedRequest request) {
+        if (userRepository.existsByUsername(request.getUsername()))
+            throw new RuntimeException("User existed.");
+
         User user = new User();
 
         user.setUsername(request.getUsername());

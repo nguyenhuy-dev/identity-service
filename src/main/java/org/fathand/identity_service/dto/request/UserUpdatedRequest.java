@@ -1,11 +1,19 @@
 package org.fathand.identity_service.dto.request;
 
+import jakarta.validation.constraints.Size;
+import org.fathand.identity_service.validation.annotation.ValidDob;
+
 import java.time.LocalDate;
 
 public class UserUpdatedRequest {
+    @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
+
     private String firstName;
+
     private String lastName;
+
+    @ValidDob(min = 18, message = "User must achieve at least age 18")
     private LocalDate dob;
 
     public String getPassword() {

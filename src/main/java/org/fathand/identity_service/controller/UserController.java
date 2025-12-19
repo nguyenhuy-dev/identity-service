@@ -1,9 +1,10 @@
-package org.fathand.identity_service.controllers;
+package org.fathand.identity_service.controller;
 
+import jakarta.validation.Valid;
 import org.fathand.identity_service.dto.request.UserCreatedRequest;
 import org.fathand.identity_service.dto.request.UserUpdatedRequest;
-import org.fathand.identity_service.entities.User;
-import org.fathand.identity_service.services.UserService;
+import org.fathand.identity_service.entity.User;
+import org.fathand.identity_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    User createUser(@RequestBody UserCreatedRequest request) {
+    User createUser(@RequestBody @Valid UserCreatedRequest request) {
         return userService.createUser(request);
     }
 
@@ -31,7 +32,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    User updateUser(@PathVariable("userId") String userId, @RequestBody UserUpdatedRequest request) {
+    User updateUser(@PathVariable("userId") String userId, @RequestBody @Valid UserUpdatedRequest request) {
         return userService.updateUser(userId, request);
     }
 
