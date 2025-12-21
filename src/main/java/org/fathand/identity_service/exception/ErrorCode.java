@@ -8,7 +8,9 @@ public enum ErrorCode {
     VALIDATION_EXCEPTION(400, "Validation failed", "Validation failed"),
 
     USER_EXISTED(400, "User existed", "Bad Request"),
-    USER_NOT_FOUND(404, "User not found", "Not Found")
+    USER_NOT_FOUND(404, "User not found", "Not Found"),
+
+    UNAUTHORIZED_LOGIN(401, "Login failed! 'username' or 'password' is not correct", "Unauthorized")
     ;
 
     ErrorCode(int code, String message, String title) {

@@ -4,22 +4,20 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.fathand.identity_service.dto.response.ApiResponse;
 import org.fathand.identity_service.dto.request.user.UserCreatedRequest;
 import org.fathand.identity_service.dto.request.user.UserUpdatedRequest;
+import org.fathand.identity_service.dto.response.ApiResponse;
 import org.fathand.identity_service.dto.response.user.UserCreatedResponse;
 import org.fathand.identity_service.dto.response.user.UserGetListResponse;
 import org.fathand.identity_service.dto.response.user.UserGetResponse;
 import org.fathand.identity_service.dto.response.user.UserUpdatedResponse;
-import org.fathand.identity_service.entity.User;
 import org.fathand.identity_service.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {

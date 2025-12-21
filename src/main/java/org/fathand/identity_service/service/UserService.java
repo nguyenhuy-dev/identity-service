@@ -14,7 +14,8 @@ import org.fathand.identity_service.exception.ApplicationException;
 import org.fathand.identity_service.exception.ErrorCode;
 import org.fathand.identity_service.mapper.IUserMapper;
 import org.fathand.identity_service.repository.IUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,8 +32,11 @@ public class UserService {
             throw new ApplicationException(ErrorCode.USER_EXISTED);
 
         User user = userMapper.toUser(request);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        User userCreated = userRepository.save(user);
 
-        return userMapper.toUserCreatedResponse(user);
+        return userMapper.toUserCreatedResponse(userCreated);
     }
 
     public List<UserGetListResponse> getUsers() {

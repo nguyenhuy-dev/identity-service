@@ -14,10 +14,6 @@ import java.time.LocalDate;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdatedRequest {
-    @Size(min = 8, message = "Password must be at least 8 characters")
-    @Digits(integer = 10, fraction = 0, message = "Digits only and max 10 digits")
-    String password;
-
     String firstName;
 
     String lastName;
