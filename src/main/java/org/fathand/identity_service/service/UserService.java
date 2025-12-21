@@ -1,10 +1,18 @@
 package org.fathand.identity_service.service;
 
-import org.fathand.identity_service.dto.request.UserCreatedRequest;
-import org.fathand.identity_service.dto.request.UserUpdatedRequest;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.fathand.identity_service.dto.request.user.UserCreatedRequest;
+import org.fathand.identity_service.dto.request.user.UserUpdatedRequest;
+import org.fathand.identity_service.dto.response.user.UserCreatedResponse;
+import org.fathand.identity_service.dto.response.user.UserGetListResponse;
+import org.fathand.identity_service.dto.response.user.UserGetResponse;
+import org.fathand.identity_service.dto.response.user.UserUpdatedResponse;
 import org.fathand.identity_service.entity.User;
 import org.fathand.identity_service.exception.ApplicationException;
 import org.fathand.identity_service.exception.ErrorCode;
+import org.fathand.identity_service.mapper.IUserMapper;
 import org.fathand.identity_service.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,43 +20,41 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
-    @Autowired
-    private IUserRepository userRepository;
+    IUserRepository userRepository;
+    IUserMapper userMapper;
 
-    public User createUser(UserCreatedRequest request) {
+    public UserCreatedResponse createUser(UserCreatedRequest request) {
         if (userRepository.existsByUsername(request.getUsername()))
             throw new ApplicationException(ErrorCode.USER_EXISTED);
 
-        User user = new User();
+        User user = userMapper.toUser(request);
 
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setDob(request.getDob());
-
-        return userRepository.save(user);
+        return userMapper.toUserCreatedResponse(user);
     }
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserGetListResponse> getUsers() {
+        List<User> users = userRepository.findAll();
+        return userMapper.toUserGetListResponseList(users);
     }
 
-    public User getUser(String id) {
-        return userRepository.findById(id)
+    public UserGetResponse getUser(String id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        return userMapper.toUserGetResponse(user);
     }
 
-    public User updateUser(String userId, UserUpdatedRequest request) {
-        User user = getUser(userId);
+    public UserUpdatedResponse updateUser(String userId, UserUpdatedRequest request) {
+        User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        user.setPassword(request.getPassword());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setDob(request.getDob());
+        userMapper.updateUser(user, request);
+        User userUpdated = userRepository.save(user);
 
-        return userRepository.save(user);
+        return userMapper.toUserUpdatedResponse(userUpdated);
     }
 
     public void deleteUser(String userId) {

@@ -1,5 +1,8 @@
 package org.fathand.identity_service.exception;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(500, "Error system", "Server Error"),
     VALIDATION_EXCEPTION(400, "Validation failed", "Validation failed"),
@@ -17,14 +20,4 @@ public enum ErrorCode {
     private final int code;
     private final String message;
     private final String title;
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getTitle() {return title;}
 }
