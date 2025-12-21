@@ -1,5 +1,6 @@
 package org.fathand.identity_service.dto.request;
 
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Size;
 import org.fathand.identity_service.validation.annotation.ValidDob;
 
@@ -7,6 +8,7 @@ import java.time.LocalDate;
 
 public class UserUpdatedRequest {
     @Size(min = 8, message = "Password must be at least 8 characters")
+    @Digits(integer = 10, fraction = 0, message = "Digits only and max 10 digits")
     private String password;
 
     private String firstName;

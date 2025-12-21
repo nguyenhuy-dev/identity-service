@@ -1,6 +1,7 @@
 package org.fathand.identity_service.controller;
 
 import jakarta.validation.Valid;
+import org.fathand.identity_service.dto.request.ApiResponse;
 import org.fathand.identity_service.dto.request.UserCreatedRequest;
 import org.fathand.identity_service.dto.request.UserUpdatedRequest;
 import org.fathand.identity_service.entity.User;
@@ -17,8 +18,13 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    User createUser(@RequestBody @Valid UserCreatedRequest request) {
-        return userService.createUser(request);
+    ApiResponse<User> createUser(@RequestBody @Valid UserCreatedRequest request) throws Exception {
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+        User user = userService.createUser(request);
+        apiResponse.setStatusCode(201);
+        apiResponse.setData(user);
+
+        return  apiResponse;
     }
 
     @GetMapping
