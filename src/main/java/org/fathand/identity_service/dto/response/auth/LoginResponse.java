@@ -15,5 +15,5 @@ public class LoginResponse {
     String username;
     String firstName;
     String lastName;
-    LocalDate dob;
+    String accessToken;
 }

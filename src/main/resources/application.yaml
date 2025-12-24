@@ -12,8 +12,10 @@ spring:
       ddl-auto: update
     show-sql: true
 
-
 server:
   port: 8080
   servlet:
     context-path: /identity
+
+jwt:
+  signerKey: "2aae6b55226b7f5328cd9551a9ef0aeae0b93bdc750265400d90231af06fa1c1"

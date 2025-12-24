@@ -1,5 +1,10 @@
 package org.fathand.identity_service.exception;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ApplicationException extends RuntimeException {
     public ApplicationException(ErrorCode errorCode) {
         super(errorCode.getMessage());
@@ -8,11 +13,4 @@ public class ApplicationException extends RuntimeException {
 
     private ErrorCode errorCode;
 
-    public ErrorCode getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(ErrorCode errorCode) {
-        this.errorCode = errorCode;
-    }
 }

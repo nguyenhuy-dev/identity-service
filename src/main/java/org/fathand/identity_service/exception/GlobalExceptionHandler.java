@@ -2,10 +2,12 @@ package org.fathand.identity_service.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,6 +42,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ErrorResponse> handlingMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        System.out.println(exception);
+
         ErrorCode errorCode = ErrorCode.VALIDATION_EXCEPTION;
 
         ErrorResponse response = new ErrorResponse();
@@ -60,8 +64,7 @@ public class GlobalExceptionHandler {
     }
 
     private Map<String, String[]> getValidationError(MethodArgumentNotValidException exception) {
-        Map<String, String[]> errors;
-        errors = exception.getFieldErrors().stream()
+        Map<String, String[]> fieldErrors = exception.getFieldErrors().stream()
                 .collect(Collectors.groupingBy(
                         FieldError::getField,
                         Collectors.mapping(
@@ -72,6 +75,22 @@ public class GlobalExceptionHandler {
                                 )
                         )
                 ));
-        return errors;
+
+        Map<String, String[]> globalErrors = exception.getGlobalErrors().stream()
+                .collect(Collectors.groupingBy(
+                        ObjectError::getObjectName,
+                        Collectors.mapping(
+                                ObjectError::getDefaultMessage,
+                                Collectors.collectingAndThen(
+                                        Collectors.toSet(),
+                                        s -> s.toArray(String[]::new)
+                                )
+                        )
+                ));
+
+        Map<String, String[]> allErrors = new HashMap<>(fieldErrors);
+        allErrors.putAll(globalErrors);
+
+        return allErrors;
     }
 }

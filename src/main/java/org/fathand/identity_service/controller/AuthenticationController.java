@@ -5,14 +5,12 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.fathand.identity_service.dto.request.authentication.ChangePasswordRequest;
 import org.fathand.identity_service.dto.request.authentication.LoginRequest;
 import org.fathand.identity_service.dto.response.ApiResponse;
 import org.fathand.identity_service.dto.response.auth.LoginResponse;
 import org.fathand.identity_service.service.AuthenticationService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -21,12 +19,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     AuthenticationService authService;
 
-    @PostMapping("/login")
-    ApiResponse<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
+    @PostMapping("/sign-in")
+    ApiResponse<LoginResponse> signIn(@RequestBody @Valid LoginRequest request) {
         LoginResponse loginResponse = authService.login(request);
         ApiResponse<LoginResponse> response = new ApiResponse<>();
         response.setStatusCode(200);
         response.setData(loginResponse);
+
+        return response;
+    }
+
+    @PostMapping("/change-password/{userId}")
+    ApiResponse<?> changePassword(@PathVariable("userId") String userId, @RequestBody @Valid ChangePasswordRequest request) {
+        authService.changePassword(userId, request);
+        ApiResponse<?> response = new ApiResponse<>();
+        response.setStatusCode(201);
+        response.setMessage("Change password successfully!");
 
         return response;
     }

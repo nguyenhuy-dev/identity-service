@@ -10,7 +10,9 @@ public enum ErrorCode {
     USER_EXISTED(400, "User existed", "Bad Request"),
     USER_NOT_FOUND(404, "User not found", "Not Found"),
 
-    UNAUTHORIZED_LOGIN(401, "Login failed! 'username' or 'password' is not correct", "Unauthorized")
+    UNAUTHORIZED_LOGIN(401, "Login failed! 'username' or 'password' is not correct", "Unauthorized"),
+
+    OLD_PASSWORD_WRONG(400, "Old password is wrong", "Bad Request");
     ;
 
     ErrorCode(int code, String message, String title) {

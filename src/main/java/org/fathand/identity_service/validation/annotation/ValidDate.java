@@ -2,16 +2,16 @@ package org.fathand.identity_service.validation.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import org.fathand.identity_service.validation.validator.DobValidator;
+import org.fathand.identity_service.validation.validator.DateValidator;
 
 import java.lang.annotation.*;
 
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = DobValidator.class)
+@Constraint(validatedBy = DateValidator.class)
 @Documented
-public @interface ValidDob {
-    String message() default "Invalid date of birth";
+public @interface ValidDate {
+    String message() default "Invalid date input";
 
     int min() default 0;
 

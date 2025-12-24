@@ -8,13 +8,19 @@ import org.fathand.identity_service.dto.response.user.UserGetResponse;
 import org.fathand.identity_service.dto.response.user.UserUpdatedResponse;
 import org.fathand.identity_service.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface IUserMapper {
+    @Mapping(target = "id", ignore = true)
     User toUser(UserCreatedRequest request);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "username", ignore = true)
+    @Mapping(target = "password", ignore = true)
     void updateUser(@MappingTarget User user, UserUpdatedRequest request);
 
     UserGetResponse toUserGetResponse(User user);
