@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import org.fathand.identity_service.validation.annotation.ValidDate;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,4 +19,6 @@ public class UserUpdatedRequest {
 
     @ValidDate(min = 18, message = "User must achieve at least age 18")
     LocalDate dob;
+
+    Set<String> roles;
 }

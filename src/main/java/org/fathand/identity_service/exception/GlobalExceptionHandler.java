@@ -42,8 +42,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ErrorResponse> handlingMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        System.out.println(exception);
-
         ErrorCode errorCode = ErrorCode.VALIDATION_EXCEPTION;
 
         ErrorResponse response = new ErrorResponse();

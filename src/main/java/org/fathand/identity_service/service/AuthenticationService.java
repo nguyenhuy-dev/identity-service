@@ -22,9 +22,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,8 @@ public class AuthenticationService {
     IUserRepository userRepository;
     IAuthenticationMapper authenticationMapper;
 
+    PasswordEncoder passwordEncoder;
+
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY; // không lấy được cho static field
@@ -42,11 +47,10 @@ public class AuthenticationService {
         User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.UNAUTHORIZED_LOGIN));
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         if (!passwordEncoder.matches(request.password(), user.getPassword()))
             throw new ApplicationException(ErrorCode.UNAUTHORIZED_LOGIN);
 
-        var accessToken = generateAccessToken(request.username());
+        var accessToken = generateAccessToken(user);
 
         LoginResponse loginResponse = authenticationMapper.toLoginResponse(user);
         loginResponse.setAccessToken(accessToken);
@@ -54,15 +58,16 @@ public class AuthenticationService {
         return loginResponse;
     }
 
-    private String generateAccessToken(String username) {
+    private String generateAccessToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         int exp = 60 * 60 * 1000;
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(user.getUsername())
                 .issuer("fathand.org")
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plusMillis(exp).toEpochMilli()))
+                .claim("scope", buildScope(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
@@ -77,11 +82,18 @@ public class AuthenticationService {
         }
     }
 
+    private String buildScope(User user) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if (!CollectionUtils.isEmpty(user.getRoles()))
+            user.getRoles().forEach(stringJoiner::add);
+
+        return stringJoiner.toString();
+    }
+
     public void changePassword(String userId, ChangePasswordRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         if (!passwordEncoder.matches(request.oldPassword(), user.getPassword()))
             throw new ApplicationException(ErrorCode.OLD_PASSWORD_WRONG);
 

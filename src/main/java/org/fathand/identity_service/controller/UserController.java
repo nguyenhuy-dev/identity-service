@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fathand.identity_service.dto.request.user.UserCreatedRequest;
 import org.fathand.identity_service.dto.request.user.UserUpdatedRequest;
 import org.fathand.identity_service.dto.response.ApiResponse;
@@ -12,9 +14,11 @@ import org.fathand.identity_service.dto.response.user.UserGetListResponse;
 import org.fathand.identity_service.dto.response.user.UserGetResponse;
 import org.fathand.identity_service.dto.response.user.UserUpdatedResponse;
 import org.fathand.identity_service.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/users")
