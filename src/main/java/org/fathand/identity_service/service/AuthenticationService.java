@@ -3,7 +3,6 @@ package org.fathand.identity_service.service;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,13 +21,11 @@ import org.fathand.identity_service.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.Date;
 import java.util.StringJoiner;
 
@@ -96,8 +93,8 @@ public class AuthenticationService {
 
     public void changePassword(String userId, ChangePasswordRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!PermissionHelper.checkPermissionUserInfo(userId, authentication))
-            throw new ApplicationException(ErrorCode.AUTHORIZATION_PERMISSION_ERROR);
+        if (PermissionHelper.checkPermissionUserInfo(userId, authentication))
+            throw new ApplicationException(ErrorCode.UNAUTHORIZED_ERROR);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));

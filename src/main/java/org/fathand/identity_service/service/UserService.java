@@ -68,11 +68,11 @@ public class UserService {
     public UserGetResponse getMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (Objects.isNull(authentication))
-            throw new ApplicationException(ErrorCode.AUTHENTICATION_ERROR);
+            throw new ApplicationException(ErrorCode.UNAUTHENTICATED_ERROR);
 
         Jwt jwt = (Jwt) authentication.getPrincipal();
         if (Objects.isNull(jwt))
-            throw new ApplicationException(ErrorCode.AUTHENTICATION_ERROR);
+            throw new ApplicationException(ErrorCode.UNAUTHENTICATED_ERROR);
 
         String userId = jwt.getClaimAsString("user_id");
         User user = userRepository.findById(userId)
@@ -84,8 +84,8 @@ public class UserService {
     public UserUpdatedResponse updateUser(String userId, UserUpdatedRequest request) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (!PermissionHelper.checkPermissionUserInfo(userId, authentication))
-            throw new ApplicationException(ErrorCode.AUTHORIZATION_PERMISSION_ERROR);
+        if (PermissionHelper.checkPermissionUserInfo(userId, authentication))
+            throw new ApplicationException(ErrorCode.UNAUTHORIZED_ERROR);
 
         User user = userRepository.findById(userId)
                         .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
@@ -98,8 +98,8 @@ public class UserService {
 
     public void deleteUser(String userId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!PermissionHelper.checkPermissionUserInfo(userId, authentication))
-            throw new ApplicationException(ErrorCode.AUTHORIZATION_PERMISSION_ERROR);
+        if (PermissionHelper.checkPermissionUserInfo(userId, authentication))
+            throw new ApplicationException(ErrorCode.UNAUTHORIZED_ERROR);
 
         userRepository.deleteById(userId);
     }

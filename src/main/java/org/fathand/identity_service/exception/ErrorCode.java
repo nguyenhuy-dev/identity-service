@@ -1,18 +1,20 @@
 package org.fathand.identity_service.exception;
 
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 @Getter
 public enum ErrorCode {
-    UNCATEGORIZED_EXCEPTION(500, "Error system", "Server Error"),
+    UNCATEGORIZED_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error system", "Server Error"),
     VALIDATION_EXCEPTION(400, "Validation failed", "Validation failed"),
 
     USER_EXISTED(400, "User existed", "Bad Request"),
     USER_NOT_FOUND(404, "User not found", "Not Found"),
 
     UNAUTHENTICATED_LOGIN(401, "Login failed! 'username' or 'password' is not correct", "Unauthenticated"),
-    AUTHENTICATION_ERROR(401, "Authentication error", "Unauthenticated"),
-    AUTHORIZATION_PERMISSION_ERROR(403, "User cannot have permission to reach this feature", "Unauthorized"),
+    UNAUTHENTICATED_ERROR(401, "Authentication error", "Unauthenticated"),
+    UNAUTHORIZED_ERROR(HttpStatus.FORBIDDEN.value(), "User cannot have permission to reach this feature", "Unauthorized"),
 
     OLD_PASSWORD_WRONG(400, "Old password is wrong", "Bad Request");
     ;

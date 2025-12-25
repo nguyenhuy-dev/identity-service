@@ -1,6 +1,7 @@
 package org.fathand.identity_service.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -57,6 +58,17 @@ public class GlobalExceptionHandler {
                         ))
                         .toList();
         response.setErrors(errorDetails);
+
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @ExceptionHandler(value = AuthorizationDeniedException.class)
+    ResponseEntity<ErrorResponse> handlingAuthorizationDeniedException(AuthorizationDeniedException exception) {
+        ErrorCode errorCode = ErrorCode.UNAUTHORIZED_ERROR;
+        ErrorResponse response = new ErrorResponse();
+        response.setStatusCode(errorCode.getCode());
+        response.setMessage(errorCode.getMessage());
+        response.setTitle(errorCode.getTitle());
 
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }

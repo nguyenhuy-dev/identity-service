@@ -2,7 +2,6 @@ package org.fathand.identity_service.configuration;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.fathand.identity_service.enums.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +40,7 @@ public class SecurityConfig {
         httpSecurity.oauth2ResourceServer(oauth2Config ->
                 oauth2Config.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .authenticationEntryPoint(new JwtAuthenticatonEntryPoint())
         );
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);

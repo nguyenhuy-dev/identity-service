@@ -12,17 +12,17 @@ import java.util.Objects;
 public class PermissionHelper {
     public static boolean checkPermissionUserInfo(@NotNull String userId, Authentication authentication) {
         if (Objects.isNull(authentication))
-            throw new ApplicationException(ErrorCode.AUTHENTICATION_ERROR);
+            throw new ApplicationException(ErrorCode.UNAUTHENTICATED_ERROR);
 
         Jwt jwt = (Jwt) authentication.getPrincipal();
         if (Objects.isNull(jwt))
-            throw new ApplicationException(ErrorCode.AUTHENTICATION_ERROR);
+            throw new ApplicationException(ErrorCode.UNAUTHENTICATED_ERROR);
 
         String rolesString = jwt.getClaimAsString("scope");
         if (rolesString.contains(Role.Admin.name()))
-            return true;
+            return false;
 
         String userIdJwt = jwt.getClaimAsString("user_id");
-        return userId.equals(userIdJwt);
+        return !userId.equals(userIdJwt);
     }
 }
