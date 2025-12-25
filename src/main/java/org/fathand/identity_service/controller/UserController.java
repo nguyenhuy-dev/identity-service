@@ -1,11 +1,10 @@
 package org.fathand.identity_service.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.fathand.identity_service.dto.request.user.UserCreatedRequest;
 import org.fathand.identity_service.dto.request.user.UserUpdatedRequest;
 import org.fathand.identity_service.dto.response.ApiResponse;
@@ -14,11 +13,10 @@ import org.fathand.identity_service.dto.response.user.UserGetListResponse;
 import org.fathand.identity_service.dto.response.user.UserGetResponse;
 import org.fathand.identity_service.dto.response.user.UserUpdatedResponse;
 import org.fathand.identity_service.service.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/users")
@@ -37,6 +35,7 @@ public class UserController {
         return  apiResponse;
     }
 
+    @PreAuthorize("hasRole('Admin')")
     @GetMapping
     ApiResponse<List<UserGetListResponse>> getUsers() {
         List<UserGetListResponse> userResponses = userService.getUsers();
@@ -59,7 +58,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    ApiResponse<UserUpdatedResponse> updateUser(@PathVariable("userId") String userId, @RequestBody @Valid UserUpdatedRequest request) {
+    ApiResponse<UserUpdatedResponse> updateUser(@PathVariable("userId") @NotEmpty String userId, @RequestBody @Valid UserUpdatedRequest request) {
         UserUpdatedResponse userResponse = userService.updateUser(userId, request);
 
         ApiResponse<UserUpdatedResponse> apiResponse = new ApiResponse<>();
@@ -78,5 +77,16 @@ public class UserController {
         apiResponse.setMessage("User has been deleted successfully!");
 
         return apiResponse;
+    }
+
+    @GetMapping("/my-info")
+    ApiResponse<UserGetResponse> getMyInfo() {
+        UserGetResponse userResponse = userService.getMyInfo();
+
+        ApiResponse<UserGetResponse> response = new ApiResponse<>();
+        response.setStatusCode(200);
+        response.setData(userResponse);
+
+        return response;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,6 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import javax.crypto.spec.SecretKeySpec;
 
 @EnableWebSecurity
+@EnableMethodSecurity
 @Configuration
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SecurityConfig {
@@ -34,7 +36,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
         httpSecurity.authorizeHttpRequests(req ->
                 req.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/users").hasRole(Role.Admin.name()) //.hasAuthority("ROLE_Admin")
                         .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2Config ->

@@ -10,7 +10,9 @@ public enum ErrorCode {
     USER_EXISTED(400, "User existed", "Bad Request"),
     USER_NOT_FOUND(404, "User not found", "Not Found"),
 
-    UNAUTHORIZED_LOGIN(401, "Login failed! 'username' or 'password' is not correct", "Unauthorized"),
+    UNAUTHENTICATED_LOGIN(401, "Login failed! 'username' or 'password' is not correct", "Unauthenticated"),
+    AUTHENTICATION_ERROR(401, "Authentication error", "Unauthenticated"),
+    AUTHORIZATION_PERMISSION_ERROR(403, "User cannot have permission to reach this feature", "Unauthorized"),
 
     OLD_PASSWORD_WRONG(400, "Old password is wrong", "Bad Request");
     ;

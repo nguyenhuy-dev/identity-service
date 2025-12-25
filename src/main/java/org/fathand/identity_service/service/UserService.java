@@ -13,14 +13,18 @@ import org.fathand.identity_service.entity.User;
 import org.fathand.identity_service.enums.Role;
 import org.fathand.identity_service.exception.ApplicationException;
 import org.fathand.identity_service.exception.ErrorCode;
+import org.fathand.identity_service.helper.PermissionHelper;
 import org.fathand.identity_service.mapper.IUserMapper;
 import org.fathand.identity_service.repository.IUserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -61,7 +65,28 @@ public class UserService {
         return userMapper.toUserGetResponse(user);
     }
 
+    public UserGetResponse getMyInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (Objects.isNull(authentication))
+            throw new ApplicationException(ErrorCode.AUTHENTICATION_ERROR);
+
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        if (Objects.isNull(jwt))
+            throw new ApplicationException(ErrorCode.AUTHENTICATION_ERROR);
+
+        String userId = jwt.getClaimAsString("user_id");
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        return userMapper.toUserGetResponse(user);
+    }
+
     public UserUpdatedResponse updateUser(String userId, UserUpdatedRequest request) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!PermissionHelper.checkPermissionUserInfo(userId, authentication))
+            throw new ApplicationException(ErrorCode.AUTHORIZATION_PERMISSION_ERROR);
+
         User user = userRepository.findById(userId)
                         .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
@@ -72,6 +97,10 @@ public class UserService {
     }
 
     public void deleteUser(String userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!PermissionHelper.checkPermissionUserInfo(userId, authentication))
+            throw new ApplicationException(ErrorCode.AUTHORIZATION_PERMISSION_ERROR);
+
         userRepository.deleteById(userId);
     }
 }
