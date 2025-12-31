@@ -46,7 +46,7 @@ public class UserService {
         // default role is User
         Set<String> roles = new HashSet<>();
         roles.add(Role.User.name());
-        user.setRoles(roles);
+        // user.setRoles(roles);
 
         User userCreated = userRepository.save(user);
 

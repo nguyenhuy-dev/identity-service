@@ -1,9 +1,11 @@
 package org.fathand.identity_service.dto.response.user;
 
+import jakarta.persistence.ManyToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.fathand.identity_service.entity.Role;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -17,5 +19,5 @@ public class UserGetResponse {
     String firstName;
     String lastName;
     LocalDate dob;
-    Set<String> roles;
+    Set<Role> roles;
 }

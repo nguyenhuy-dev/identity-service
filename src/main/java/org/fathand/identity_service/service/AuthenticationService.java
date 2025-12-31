@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.fathand.identity_service.dto.request.authentication.ChangePasswordRequest;
 import org.fathand.identity_service.dto.request.authentication.LoginRequest;
 import org.fathand.identity_service.dto.response.auth.LoginResponse;
+import org.fathand.identity_service.entity.Role;
 import org.fathand.identity_service.entity.User;
 import org.fathand.identity_service.exception.ApplicationException;
 import org.fathand.identity_service.exception.ErrorCode;
@@ -86,7 +87,9 @@ public class AuthenticationService {
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
         if (!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles().forEach(stringJoiner::add);
+            user.getRoles()
+                    .stream().map(Role::getName)
+                    .forEach(stringJoiner::add);
 
         return stringJoiner.toString();
     }

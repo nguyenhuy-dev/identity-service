@@ -40,7 +40,7 @@ public class SecurityConfig {
         httpSecurity.oauth2ResourceServer(oauth2Config ->
                 oauth2Config.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                        .authenticationEntryPoint(new JwtAuthenticatonEntryPoint())
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
         );
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
